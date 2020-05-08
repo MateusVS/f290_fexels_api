@@ -120,8 +120,30 @@ class _HomePageState extends State<HomePage> {
       ),
       itemCount: _getCount(snapshot.data["photos"]),
       itemBuilder: (context, index) {
-        return PexelsImage(data: snapshot.data, index: index);
+        return PexelImage(data: snapshot.data, index: index);
       },
+    );
+  }
+}
+
+class PexelImage extends StatelessWidget {
+  final Map data;
+  final int index;
+
+  PexelImage({@required this.data, @required this.index});
+
+  @override
+  Widget build(BuildContext contex) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.network(
+          data["photos"][index]["src"]["medium"],
+          fit: BoxFit.cover,
+          height: 300,
+        ),
+        //LabelImageData(data: data, index: index),
+      ],
     );
   }
 }
