@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as json;
 
 class HomePage extends StatefulWidget {
   @override
@@ -6,6 +8,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() async {
+    super.initState();
+    obterDadosPokeAPI();
+  }
+
+  obterDadosPokeAPI() async {
+    http.Response response = await http.get('https://pokeapi.co/api/v2/pokemon/pikachu');
+    print(response.body);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
