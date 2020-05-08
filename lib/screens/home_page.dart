@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'dart:convert' as json;
 
 class HomePage extends StatefulWidget {
@@ -15,6 +18,10 @@ class _HomePageState extends State<HomePage> {
   void initState() async {
     super.initState();
     _getImages().then((value) => print(value));
+  }
+
+  int _getCount(List data) {
+    return data.length ?? 0;
   }
 
   static const String API_KEY = '563492ad6f917000010000018cea5845c8354912920099138687a563';
@@ -71,13 +78,50 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Expanded(
-              child: Container(
-                color: Colors.red,
+              child: FutureBuilder(
+                future: _getImages(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                      return Container(
+                        width: 200,
+                        height: 200,
+                        alignment: Alignment.center,
+                        child: Loading (
+                          indicator: BallPulseIndicator(),
+                          size: 200,
+                          color: Colors.white,
+                        ),
+                      );
+                    default: 
+                      if (snapshot.hasError) {
+                        print('Erro: ${snapshot.error.toString()}');
+                      } else {
+                        return Container(color: Colors.green, );
+                      }
+                  }
+                }
               ),
             )
           ],
         ),
       )
+    );
+  }
+
+  Widget _createImageGrid(BuildContext context, AsyncSnapshot snapshot) {
+    return GridView.builder(
+      padding: EdgeInsets.only(top: 5, bottom: 10),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+      ),
+      itemCount: _getCount(snapshot.data["photos"]),
+      itemBuilder: (context, index) {
+        return PexelsImage(data: snapshot.data, index: index);
+      },
     );
   }
 }
