@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:f290_pexels_api/screens/new_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +26,8 @@ class _HomePageState extends State<HomePage> {
     return data.length ?? 0;
   }
 
-  static const String API_KEY = '563492ad6f917000010000018cea5845c8354912920099138687a563';
+  static const String API_KEY =
+      '563492ad6f917000010000018cea5845c8354912920099138687a563';
 
   Future _getImages() async {
     final urlCuratedPhotos =
@@ -143,7 +145,16 @@ class _HomePageState extends State<HomePage> {
       ),
       itemCount: _getCount(snapshot.data["photos"]),
       itemBuilder: (context, index) {
-        return PexelImage(data: snapshot.data, index: index);
+        return GestureDetector(
+          onTap: () {
+            Route route = MaterialPageRoute(
+                builder: (context) => NewPage(
+                      url: snapshot.data["photos"][index]["src"]["medium"],
+                    ));
+            Navigator.push(context, route);
+          },
+          child: PexelImage(data: snapshot.data, index: index),
+        );
       },
     );
   }
